@@ -8,7 +8,9 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class DebugViewController: UIViewController {
+    
+    let myBLE = BLEService() // Create a BLE variable to handle BLE connection and communication
 
     override func viewDidLoad() {
         super.viewDidLoad()

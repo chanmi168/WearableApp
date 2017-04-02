@@ -8,12 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		6FA1CD731E7BACD000137398 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1CD721E7BACD000137398 /* AppDelegate.swift */; };
-		6FA1CD751E7BACD000137398 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1CD741E7BACD000137398 /* ViewController.swift */; };
+		6FA1CD751E7BACD000137398 /* DebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1CD741E7BACD000137398 /* DebugViewController.swift */; };
 		6FA1CD781E7BACD000137398 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FA1CD761E7BACD000137398 /* Main.storyboard */; };
 		6FA1CD7A1E7BACD000137398 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6FA1CD791E7BACD000137398 /* Assets.xcassets */; };
 		6FA1CD7D1E7BACD000137398 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FA1CD7B1E7BACD000137398 /* LaunchScreen.storyboard */; };
 		6FA1CD881E7BACD000137398 /* PAN1740DPSPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1CD871E7BACD000137398 /* PAN1740DPSPTests.swift */; };
 		6FA1CD931E7BACD000137398 /* PAN1740DPSPUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1CD921E7BACD000137398 /* PAN1740DPSPUITests.swift */; };
+		6FA1CDA21E7BAD1D00137398 /* BLEService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1CDA11E7BAD1D00137398 /* BLEService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,7 +37,7 @@
 /* Begin PBXFileReference section */
 		6FA1CD6F1E7BACD000137398 /* PAN1740DPSP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PAN1740DPSP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FA1CD721E7BACD000137398 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		6FA1CD741E7BACD000137398 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		6FA1CD741E7BACD000137398 /* DebugViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugViewController.swift; sourceTree = "<group>"; };
 		6FA1CD771E7BACD000137398 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6FA1CD791E7BACD000137398 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		6FA1CD7C1E7BACD000137398 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -47,6 +48,7 @@
 		6FA1CD8E1E7BACD000137398 /* PAN1740DPSPUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PAN1740DPSPUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FA1CD921E7BACD000137398 /* PAN1740DPSPUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PAN1740DPSPUITests.swift; sourceTree = "<group>"; };
 		6FA1CD941E7BACD100137398 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6FA1CDA11E7BAD1D00137398 /* BLEService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLEService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,11 +100,12 @@
 			isa = PBXGroup;
 			children = (
 				6FA1CD721E7BACD000137398 /* AppDelegate.swift */,
-				6FA1CD741E7BACD000137398 /* ViewController.swift */,
+				6FA1CD741E7BACD000137398 /* DebugViewController.swift */,
 				6FA1CD761E7BACD000137398 /* Main.storyboard */,
 				6FA1CD791E7BACD000137398 /* Assets.xcassets */,
 				6FA1CD7B1E7BACD000137398 /* LaunchScreen.storyboard */,
 				6FA1CD7E1E7BACD000137398 /* Info.plist */,
+				6FA1CDA11E7BAD1D00137398 /* BLEService.swift */,
 			);
 			path = PAN1740DPSP;
 			sourceTree = "<group>";
@@ -262,8 +265,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6FA1CD751E7BACD000137398 /* ViewController.swift in Sources */,
+				6FA1CD751E7BACD000137398 /* DebugViewController.swift in Sources */,
 				6FA1CD731E7BACD000137398 /* AppDelegate.swift in Sources */,
+				6FA1CDA21E7BAD1D00137398 /* BLEService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -512,6 +516,7 @@
 				6FA1CD991E7BACD100137398 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6FA1CD9A1E7BACD100137398 /* Build configuration list for PBXNativeTarget "PAN1740DPSPTests" */ = {
 			isa = XCConfigurationList;
@@ -520,6 +525,7 @@
 				6FA1CD9C1E7BACD100137398 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6FA1CD9D1E7BACD100137398 /* Build configuration list for PBXNativeTarget "PAN1740DPSPUITests" */ = {
 			isa = XCConfigurationList;
@@ -528,6 +534,7 @@
 				6FA1CD9F1E7BACD100137398 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
