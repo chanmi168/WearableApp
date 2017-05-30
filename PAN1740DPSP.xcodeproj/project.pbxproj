@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F3DF9B71ED2BD8200A58183 /* Charts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6F3DF9B41ED2BD4900A58183 /* Charts.framework */; };
+		6F3DF9B81ED2BD8200A58183 /* Charts.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 6F3DF9B41ED2BD4900A58183 /* Charts.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		6F3DF9C01ED2DB8C00A58183 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F3DF9BF1ED2DB8C00A58183 /* Utilities.swift */; };
 		6FA1CD731E7BACD000137398 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1CD721E7BACD000137398 /* AppDelegate.swift */; };
 		6FA1CD751E7BACD000137398 /* DebugViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1CD741E7BACD000137398 /* DebugViewController.swift */; };
 		6FA1CD781E7BACD000137398 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FA1CD761E7BACD000137398 /* Main.storyboard */; };
@@ -18,6 +21,27 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		6F3DF9B31ED2BD4900A58183 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6F3DF9AE1ED2BD4900A58183 /* Charts.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 06165F241D8110E600722320;
+			remoteInfo = Charts;
+		};
+		6F3DF9B51ED2BD4900A58183 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6F3DF9AE1ED2BD4900A58183 /* Charts.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 06165F2E1D8110E600722320;
+			remoteInfo = ChartsTests;
+		};
+		6F3DF9B91ED2BD8200A58183 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6F3DF9AE1ED2BD4900A58183 /* Charts.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 06165F231D8110E600722320;
+			remoteInfo = Charts;
+		};
 		6FA1CD841E7BACD000137398 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 6FA1CD671E7BACD000137398 /* Project object */;
@@ -34,7 +58,23 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		6F3DF9BB1ED2BD8200A58183 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				6F3DF9B81ED2BD8200A58183 /* Charts.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		6F3DF9AE1ED2BD4900A58183 /* Charts.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Charts.xcodeproj; path = "../../Charts-master/Charts.xcodeproj"; sourceTree = "<group>"; };
+		6F3DF9BF1ED2DB8C00A58183 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
 		6FA1CD6F1E7BACD000137398 /* PAN1740DPSP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PAN1740DPSP.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FA1CD721E7BACD000137398 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6FA1CD741E7BACD000137398 /* DebugViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugViewController.swift; sourceTree = "<group>"; };
@@ -56,6 +96,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F3DF9B71ED2BD8200A58183 /* Charts.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,6 +117,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6F3DF9AF1ED2BD4900A58183 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6F3DF9B41ED2BD4900A58183 /* Charts.framework */,
+				6F3DF9B61ED2BD4900A58183 /* ChartsTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		6FA1CD661E7BACD000137398 = {
 			isa = PBXGroup;
 			children = (
@@ -99,6 +149,7 @@
 		6FA1CD711E7BACD000137398 /* PAN1740DPSP */ = {
 			isa = PBXGroup;
 			children = (
+				6F3DF9AE1ED2BD4900A58183 /* Charts.xcodeproj */,
 				6FA1CD721E7BACD000137398 /* AppDelegate.swift */,
 				6FA1CD741E7BACD000137398 /* DebugViewController.swift */,
 				6FA1CD761E7BACD000137398 /* Main.storyboard */,
@@ -106,6 +157,7 @@
 				6FA1CD7B1E7BACD000137398 /* LaunchScreen.storyboard */,
 				6FA1CD7E1E7BACD000137398 /* Info.plist */,
 				6FA1CDA11E7BAD1D00137398 /* BLEService.swift */,
+				6F3DF9BF1ED2DB8C00A58183 /* Utilities.swift */,
 			);
 			path = PAN1740DPSP;
 			sourceTree = "<group>";
@@ -138,10 +190,12 @@
 				6FA1CD6B1E7BACD000137398 /* Sources */,
 				6FA1CD6C1E7BACD000137398 /* Frameworks */,
 				6FA1CD6D1E7BACD000137398 /* Resources */,
+				6F3DF9BB1ED2BD8200A58183 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6F3DF9BA1ED2BD8200A58183 /* PBXTargetDependency */,
 			);
 			name = PAN1740DPSP;
 			productName = PAN1740DPSP;
@@ -224,6 +278,12 @@
 			mainGroup = 6FA1CD661E7BACD000137398;
 			productRefGroup = 6FA1CD701E7BACD000137398 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 6F3DF9AF1ED2BD4900A58183 /* Products */;
+					ProjectRef = 6F3DF9AE1ED2BD4900A58183 /* Charts.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				6FA1CD6E1E7BACD000137398 /* PAN1740DPSP */,
@@ -232,6 +292,23 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		6F3DF9B41ED2BD4900A58183 /* Charts.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Charts.framework;
+			remoteRef = 6F3DF9B31ED2BD4900A58183 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		6F3DF9B61ED2BD4900A58183 /* ChartsTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ChartsTests.xctest;
+			remoteRef = 6F3DF9B51ED2BD4900A58183 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		6FA1CD6D1E7BACD000137398 /* Resources */ = {
@@ -267,6 +344,7 @@
 			files = (
 				6FA1CD751E7BACD000137398 /* DebugViewController.swift in Sources */,
 				6FA1CD731E7BACD000137398 /* AppDelegate.swift in Sources */,
+				6F3DF9C01ED2DB8C00A58183 /* Utilities.swift in Sources */,
 				6FA1CDA21E7BAD1D00137398 /* BLEService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -290,6 +368,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		6F3DF9BA1ED2BD8200A58183 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Charts;
+			targetProxy = 6F3DF9B91ED2BD8200A58183 /* PBXContainerItemProxy */;
+		};
 		6FA1CD851E7BACD000137398 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 6FA1CD6E1E7BACD000137398 /* PAN1740DPSP */;
@@ -416,11 +499,12 @@
 		6FA1CD981E7BACD100137398 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = STW839F2RG;
 				INFOPLIST_FILE = PAN1740DPSP/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = Michael.PAN1740DPSP;
+				PRODUCT_BUNDLE_IDENTIFIER = Michael.PAN1740;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -429,11 +513,12 @@
 		6FA1CD991E7BACD100137398 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = STW839F2RG;
 				INFOPLIST_FILE = PAN1740DPSP/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = Michael.PAN1740DPSP;
+				PRODUCT_BUNDLE_IDENTIFIER = Michael.PAN1740;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};

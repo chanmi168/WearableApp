@@ -13,10 +13,10 @@ import CoreBluetooth
 
 // Services & Characteristics UUIDs, can be found on UM-B-038 //
 let ServiceDSPSUUID = CBUUID(string: "0783b03e-8535-b5a0-7140-a304d2495cb7")
-let CharacteristicTXUUID = CBUUID(string: "0783b03e-8535-b5a0-7140-a304d2495cb8")
-let CharacteristicRXUUID = CBUUID(string: "0783b03e-8535-b5a0-7140-a304d2495cba")
+let CharacteristicTXUUID = CBUUID(string: "0783b03e-8535-b5a0-7140-a304d2495cba") // RX of PAN1740
+let CharacteristicRXUUID = CBUUID(string: "0783b03e-8535-b5a0-7140-a304d2495cb8") // TX of PAN1740
 let CharacteristicFCUUID = CBUUID(string: "0783b03e-8535-b5a0-7140-a304d2495cb9")
-let BLEServiceChangedStatusNotification = "kBLEServiceChangedStatusNotification"
+let BLEServiceChangedStatusNotification = "BLEServiceChangedStatusNotification"
 
 //let btDiscoverySharedInstance = BTDiscovery();
 
@@ -88,6 +88,11 @@ class BLEService: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         print("Now start discovering services")
         peripheral.discoverServices([ServiceDSPSUUID]) // Expect to call didDiscoverService when found
         centralManager?.stopScan()
+        
+        let connectWrapped:[String: Int] = ["status": 1]
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "BLEConnectNotification"), object: nil, userInfo: connectWrapped)
+        }
     }
 
     
@@ -97,7 +102,12 @@ class BLEService: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         if (peripheral == self.peripheralPAN1740) {
             self.peripheralPAN1740 = nil
         }
-        self.startScanning()
+        let connectWrapped:[String: Int] = ["status": 0]
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "BLEConnectNotification"), object: nil, userInfo: connectWrapped)
+        }
+        // Don't scan unless the user prompt
+//        self.startScanning()
     }
 
     
@@ -142,6 +152,8 @@ class BLEService: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         }
     }
     
+
+    
     func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         if (peripheral != self.peripheralPAN1740) {
             // Wrong Peripheral
@@ -157,14 +169,18 @@ class BLEService: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
             for characteristic in characteristics {
                 switch characteristic.uuid {
                 case CharacteristicTXUUID:
-                    self.CharacteristicTX = characteristic
-                    // Implement a method to notify the app
+                    print("Found TX")
+                    CharacteristicTX = characteristic
+                    peripheralPAN1740?.setNotifyValue(true, for: characteristic)
                 case CharacteristicRXUUID:
                     // This characteristic is set up to notify when value changed
-                    self.CharacteristicRX = characteristic
-                    self.peripheralPAN1740?.setNotifyValue(true, for: characteristic)
+                    print("Found RX")
+                    CharacteristicRX = characteristic
+                    peripheralPAN1740?.setNotifyValue(true, for: characteristic)
                 case CharacteristicFCUUID:
-                    self.CharacteristicFC = characteristic
+                    print("Found FC")
+                    CharacteristicFC = characteristic
+                    peripheralPAN1740?.setNotifyValue(true, for: characteristic)
                 default:
                     break
                 }
@@ -172,6 +188,114 @@ class BLEService: NSObject, CBCentralManagerDelegate, CBPeripheralDelegate {
         }
 
     }
+    
+    
+    func peripheral(_ peripheral: CBPeripheral, didUpdateValueFor characteristic: CBCharacteristic, error: Error?) {
+        if error != nil {
+            print("[ERROR] Error updating value. \(error!.localizedDescription)")
+            return
+        }
+        if characteristic.uuid == CharacteristicTXUUID {
+                        print("TX updated")
+            // Decode the bytes here
+//            var data: NSData = characteristic.value! as NSData
+//            var dataArray = [CUnsignedChar](repeating: CUnsignedChar(), count: 20)
+//            var len: Int = 0
+//            data.getBytes(&dataArray, length: 3)
+//            translatedata(dataArray, length: data.length)
+        }
+        if characteristic.uuid == CharacteristicFCUUID {
+            let data: NSData = characteristic.value! as NSData
+            var dataArray = [UInt8](repeating: 0, count: 20)
+            data.getBytes(&dataArray, length: 1)
+            print("Flow control updated")
+            
+        }
+        if characteristic.uuid == CharacteristicRXUUID {
+//            let data: NSData = characteristic.value! as NSData
+//            var dataArray = [UInt8](repeating: 0, count: 20)
+//            data.getBytes(&dataArray, length: 5)
+            
+            let data = characteristic.value! as Data
+//            print("RX updated")
+            let dataArrayWrapped:[String: Data] = ["rawData": data]
+            
+            
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: NSNotification.Name(rawValue: "RXUpdatedNotification"), object: nil, userInfo: dataArrayWrapped)
+            }
+        }
+        
+    }
+    
+    
+
+    
+    func writeText(cmd: String) {
+        let textBuffer = [UInt8](cmd.utf8)
+        
+        let buf: [UInt8] = [0x41, 0x43, 0x44]
+        let XON: [UInt8] = [0x01]
+        let XOFF: [UInt8] = [0x02]
+        let data: NSData = NSData(bytes: textBuffer, length: textBuffer.count)
+        let dataXON: NSData = NSData(bytes: XON, length: 1)
+        let dataXOFF: NSData = NSData(bytes: XOFF, length: 1)
+        peripheralPAN1740?.writeValue(data as Data, for: CharacteristicTX!, type: .withoutResponse)
+        peripheralPAN1740?.writeValue(dataXOFF as Data, for: CharacteristicFC!, type: .withoutResponse)
+        peripheralPAN1740?.writeValue(dataXON as Data, for: CharacteristicFC!, type: .withoutResponse)
+    }
+    
+    
+    
+    
+    func disconnect() {
+        
+        // 1 - verify we have a peripheral
+        guard let peripheral = self.peripheralPAN1740 else {
+            print("No peripheral available to cleanup.")
+            return
+        }
+        
+        // 2 - Don't do anything if we're not connected
+        if peripheral.state != .connected {
+            print("Peripheral is not connected.")
+            self.peripheralPAN1740 = nil
+            return
+        }
+        
+        // 3
+        guard let services = peripheral.services else {
+            // disconnect directly
+            centralManager?.cancelPeripheralConnection(peripheral)
+            return
+        }
+        
+        // 4 - iterate through services
+        for service in services {
+            // iterate through characteristics
+            if let characteristics = service.characteristics {
+                for characteristic in characteristics {
+                    // find the all characteristics
+                    switch characteristic.uuid {
+                    case CharacteristicTXUUID:
+                        peripheral.setNotifyValue(false, for: characteristic)
+                    case CharacteristicRXUUID:
+                        peripheral.setNotifyValue(false, for: characteristic)
+                    case CharacteristicFCUUID:
+                        peripheral.setNotifyValue(false, for: characteristic)
+                    default:
+                        break
+                    }
+
+                }
+            }
+        } 
+        
+        // 6 - disconnect from peripheral
+        centralManager?.cancelPeripheralConnection(peripheral)
+    }
+    
+    
     
     
     
