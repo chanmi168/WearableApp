@@ -18,6 +18,7 @@
 		6FA1CD881E7BACD000137398 /* PAN1740DPSPTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1CD871E7BACD000137398 /* PAN1740DPSPTests.swift */; };
 		6FA1CD931E7BACD000137398 /* PAN1740DPSPUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1CD921E7BACD000137398 /* PAN1740DPSPUITests.swift */; };
 		6FA1CDA21E7BAD1D00137398 /* BLEService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA1CDA11E7BAD1D00137398 /* BLEService.swift */; };
+		6FCA26051EF759250039B98F /* LivePlotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCA26041EF759250039B98F /* LivePlotView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,7 @@
 		6FA1CD921E7BACD000137398 /* PAN1740DPSPUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PAN1740DPSPUITests.swift; sourceTree = "<group>"; };
 		6FA1CD941E7BACD100137398 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6FA1CDA11E7BAD1D00137398 /* BLEService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BLEService.swift; sourceTree = "<group>"; };
+		6FCA26041EF759250039B98F /* LivePlotView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LivePlotView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,11 +154,12 @@
 				6F3DF9AE1ED2BD4900A58183 /* Charts.xcodeproj */,
 				6FA1CD721E7BACD000137398 /* AppDelegate.swift */,
 				6FA1CD741E7BACD000137398 /* DebugViewController.swift */,
+				6FA1CDA11E7BAD1D00137398 /* BLEService.swift */,
+				6FCA26041EF759250039B98F /* LivePlotView.swift */,
 				6FA1CD761E7BACD000137398 /* Main.storyboard */,
 				6FA1CD791E7BACD000137398 /* Assets.xcassets */,
 				6FA1CD7B1E7BACD000137398 /* LaunchScreen.storyboard */,
 				6FA1CD7E1E7BACD000137398 /* Info.plist */,
-				6FA1CDA11E7BAD1D00137398 /* BLEService.swift */,
 				6F3DF9BF1ED2DB8C00A58183 /* Utilities.swift */,
 			);
 			path = PAN1740DPSP;
@@ -344,6 +347,7 @@
 			files = (
 				6FA1CD751E7BACD000137398 /* DebugViewController.swift in Sources */,
 				6FA1CD731E7BACD000137398 /* AppDelegate.swift in Sources */,
+				6FCA26051EF759250039B98F /* LivePlotView.swift in Sources */,
 				6F3DF9C01ED2DB8C00A58183 /* Utilities.swift in Sources */,
 				6FA1CDA21E7BAD1D00137398 /* BLEService.swift in Sources */,
 			);

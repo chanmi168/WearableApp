@@ -9,53 +9,61 @@
 import UIKit
 import Charts
 
+class liveSignal {
+    var window_counter = 0
+    var lineChartView: LineChartView!
+    var dataSet: LineChartDataSet!
+}
+
+
 class DebugViewController: UIViewController, UITextFieldDelegate{
     
     // BLE variables
     var myBLE: BLEService!
     var BLEconnectTimeout: Timer!
     var myTimer: Timer!
-    var myECG: String!
-    var myPPG: String!
-    
-    var ECGorRedToggle = false // ECG first
-    
-    // Sine Wave parameters
-    let sineArraySize = 1000
-    let frequency1 = 5.0
-    let frequency2 = 10.0
-    let phase = [0.0, 2.0, 4.0, 6.0, 8.0, 10.0, 12.0, 14.0, 16.0, 18.0]
-    let amplitude1 = 2.0
-    var sineWave1: [Double] = []
-    var sineWave2: [Double] = []
-    var toggleState = 1
+    var SlicedBuffer: [UInt8] = []
     
     // Graph size (pixels)
-    let GraphWindowSize = 500 // Can draw 5 beat cycle
-    var GraphWindow_counter = 0
+    let GraphWindowSize = 300 // Can draw 5 beat cycle
+    var ECGWindow_counter = 0
+    var RedWindow_counter = 0
     
     // ECG Wave Parameters
     let ECGsize = 100
-    var ECG_counter = 20
     
     // Chart variables
+    
+    
+    @IBOutlet weak var ECGLineChartView: LineChartView!
+    
+    @IBOutlet weak var RedLineChartView: LineChartView!
+    
+    @IBOutlet weak var IRLineChartView: LineChartView!
+    
+    @IBOutlet weak var RespLineChartView: LineChartView!
+    
+    var ECGsignal = liveSignal()
+    var Redsignal = liveSignal()
+    var IRsignal = liveSignal()
+    var Respsignal = liveSignal()
+    
     var ECGDataSet = LineChartDataSet()
-//    var PPGDataSet = LineChartDataSet()
-    var ECGxaxis: XAxis!
-    var ECGyaxis: YAxis!
     
     var RedDataSet = LineChartDataSet()
-    var Redxaxis: XAxis!
-    var Redyaxis: YAxis!
+    
+    var IRDataSet = LineChartDataSet()
+    
+    var RespDataSet = LineChartDataSet()
+
+
     
     // Sine Wave Timer
     var timeLeft = 1000
     var TotalTime = 1000
     var dataTimer: Timer!
     
-//    weak var delegate: ChartViewDelegate?
-    
-    @IBOutlet weak var HighLightedLabel: UILabel!
+
     // Control Panel parameters
     var PlayPauseToggle: Bool = false {
         // false = puasing, true = playing
@@ -69,9 +77,7 @@ class DebugViewController: UIViewController, UITextFieldDelegate{
     }
 
     
-    @IBOutlet weak var ECGLineChartView: LineChartView!
-    
-    @IBOutlet weak var RedLineChartView: LineChartView!
+
 //    @IBOutlet weak var PPGLineChartView: LineChartView!
     
     @IBOutlet weak var PlayPauseButton: UIButton!
@@ -143,45 +149,21 @@ class DebugViewController: UIViewController, UITextFieldDelegate{
         
         if let text = termInputTextField.text, !text.isEmpty {
             myBLE.writeText(cmd: text)
-//            sendTextButton.setTitle("Stop", for: .normal)
-//            myTimer = Timer.scheduledTimer(timeInterval: 0.4, target: self, selector: #selector(timerCode), userInfo: nil, repeats: true)
         }
         else {
             print("Enter someting in textfield")
         }
-//        if sendTextButton.titleLabel?.text == "Send Command" {
-//            
-//            if myTimer == nil {
-//                if let text = termInputTextField.text, !text.isEmpty {
-//                    sendTextButton.setTitle("Stop", for: .normal)
-//                    myTimer = Timer.scheduledTimer(timeInterval: 0.4, target: self, selector: #selector(timerCode), userInfo: nil, repeats: true)
-//                }
-//                else {
-//                    print("Enter someting in textfield")
-//                }
-//            }
-//        }
-//        else if sendTextButton.titleLabel?.text == "Stop" {
-//            sendTextButton.setTitle("Send Command", for: .normal)
-//            myTimer.invalidate()
-//            myTimer = nil
-//        }
-        
     }
     
     @IBOutlet weak var sendTextButton: UIButton!
     
     
     
-    func timerCode() {
-//        let text = termInputTextField.text
-        myBLE.writeText(cmd: "hello")
-    }
+
     
     
     @IBOutlet weak var termInputTextField: UITextField!
     
-    @IBOutlet weak var RxLabel: UILabel!
 
 //    @IBOutlet weak var PPGLabel: UILabel!
 
@@ -196,91 +178,38 @@ class DebugViewController: UIViewController, UITextFieldDelegate{
         
         
         
-        
-        // ECG Line Chart Configuration 
-        
-        ECGLineChartView.noDataText = "You need to provide data for the chart."
-        ECGLineChartView.chartDescription?.text = "Tap node for details"
-        ECGLineChartView.chartDescription?.position = CGPoint(x: 320.0, y: 168.0)
-        ECGLineChartView.chartDescription?.textColor = UIColor.black
-        ECGLineChartView.drawGridBackgroundEnabled = true
-        ECGLineChartView.gridBackgroundColor = UIColor.white
-        ECGLineChartView.borderLineWidth = 0.0
-        ECGLineChartView.drawBordersEnabled = false
-        ECGLineChartView.borderColor = .clear
-        ECGLineChartView.highlightPerTapEnabled = true
-        
-//        ECGLineChartView.borderColor = UIColor(red: (50.0/255.0), green: (50.0/255.0), blue: (50.0/255.0), alpha: (0.5))
-        ECGLineChartView.noDataText = "You need to provide data for the chart."
-        sineWave1 = (0..<sineArraySize).map {
-            amplitude1 * sin(2.0 * Double.pi / Double(sineArraySize) * Double($0) * frequency1 + phase[8])
-        }
-        sineWave2 = (0..<sineArraySize).map {
-            amplitude1 * sin(2.0 * Double.pi / Double(sineArraySize) * Double($0) * frequency2 + phase[3])
+        // Produce fake ECG data
+        var defaultECG = [Double]()
+        var i = 1
+        while i <= GraphWindowSize/ECGdata.count {
+            defaultECG = defaultECG + ECGdata
+            i = i + 1
         }
         
-        ECGxaxis = ECGLineChartView.xAxis
-        ECGxaxis.labelPosition = .bottom
-        ECGxaxis.labelFont = UIFont(name: "AppleSDGothicNeo-UltraLight", size: 8.0)!
-        ECGxaxis.labelTextColor = .black
-        ECGxaxis.axisMaximum = Double(GraphWindowSize + 10)
-        ECGxaxis.gridColor = UIColor(red: (239/255.0), green: (239/255.0), blue: (239/255.0), alpha: (1.0)) //alpha defines transparency
-//        ECGxaxis.drawLimitLinesBehindDataEnabled = true
+
+
+        ECGDataSet = initializeChart(thisChartView: ECGLineChartView, defaultData: defaultECG)
+        ECGsignal.window_counter = 0
+        ECGsignal.dataSet = ECGDataSet
+        ECGsignal.lineChartView = ECGLineChartView
         
-        ECGyaxis = ECGLineChartView.leftAxis
-        ECGyaxis.labelPosition = .outsideChart
-        ECGyaxis.labelFont = UIFont(name: "AppleSDGothicNeo-UltraLight", size: 8.0)!
-        ECGyaxis.labelTextColor = .black
-        ECGyaxis.gridColor = UIColor(red: (239/255.0), green: (239/255.0), blue: (239/255.0), alpha: (1.0)) //alpha defines transparency
-        ECGyaxis.drawBottomYLabelEntryEnabled = false
-        
-        ECGLineChartView.rightAxis.enabled = false
-    
-        ECGDataSet = setChart(TheChartView: ECGLineChartView, values: ECGdata + ECGdata + ECGdata + ECGdata + ECGdata)
+        RedDataSet = initializeChart(thisChartView: RedLineChartView, defaultData: defaultECG)
+        Redsignal.window_counter = 0
+        Redsignal.dataSet = RedDataSet
+        Redsignal.lineChartView = RedLineChartView
+
+        IRDataSet = initializeChart(thisChartView: IRLineChartView, defaultData: defaultECG)
+        IRsignal.window_counter = 0
+        IRsignal.dataSet = IRDataSet
+        IRsignal.lineChartView = IRLineChartView
 
         
-        
-        
-        // ECG Line Chart Configuration
-        
-        RedLineChartView.noDataText = "You need to provide data for the chart."
-        RedLineChartView.chartDescription?.text = "Tap node for details"
-        RedLineChartView.chartDescription?.position = CGPoint(x: 320.0, y: 168.0)
-        RedLineChartView.chartDescription?.textColor = UIColor.black
-        RedLineChartView.drawGridBackgroundEnabled = true
-        RedLineChartView.gridBackgroundColor = UIColor.white
-        RedLineChartView.borderLineWidth = 0.0
-        RedLineChartView.drawBordersEnabled = false
-        RedLineChartView.borderColor = .clear
-        RedLineChartView.highlightPerTapEnabled = true
-        
-        RedLineChartView.noDataText = "You need to provide data for the chart."
-       
-        
-        Redxaxis = ECGLineChartView.xAxis
-        Redxaxis.labelPosition = .bottom
-        Redxaxis.labelFont = UIFont(name: "AppleSDGothicNeo-UltraLight", size: 8.0)!
-        Redxaxis.labelTextColor = .black
-        Redxaxis.axisMaximum = Double(GraphWindowSize + 10)
-        Redxaxis.gridColor = UIColor(red: (239/255.0), green: (239/255.0), blue: (239/255.0), alpha: (1.0)) //alpha defines transparency
-        //        ECGxaxis.drawLimitLinesBehindDataEnabled = true
-        
-        Redyaxis = ECGLineChartView.leftAxis
-        Redyaxis.labelPosition = .outsideChart
-        Redyaxis.labelFont = UIFont(name: "AppleSDGothicNeo-UltraLight", size: 8.0)!
-        Redyaxis.labelTextColor = .black
-        Redyaxis.gridColor = UIColor(red: (239/255.0), green: (239/255.0), blue: (239/255.0), alpha: (1.0)) //alpha defines transparency
-        Redyaxis.drawBottomYLabelEntryEnabled = false
-        
-        RedLineChartView.rightAxis.enabled = false
-        
-        RedDataSet = setChart(TheChartView: RedLineChartView, values: ECGdata + ECGdata + ECGdata + ECGdata + ECGdata)
-        
-        
-        
-        
-        
+        RespDataSet = initializeChart(thisChartView: RespLineChartView, defaultData: defaultECG)
+        Respsignal.window_counter = 0
+        Respsignal.dataSet = RespDataSet
+        Respsignal.lineChartView = RespLineChartView
 
+        
         self.navigationController?.isNavigationBarHidden = true
         
         // Text field configuration
@@ -316,37 +245,69 @@ class DebugViewController: UIViewController, UITextFieldDelegate{
             case "RXUpdatedNotification":
                 if let myData = notification.userInfo?["rawData"] as? Data {
                     if myData.count < 20*7+1 && myData.count > 0 { //Sometimes. Come back later Michael!
+
                         var byte = [UInt8](repeating:0, count: myData.count)
                         myData.copyBytes(to: &byte, count: myData.count)
                         
-//                        if myData.count < 10 {
-//                            let aaa = byte
-//                        }
+//                        print(myData.count % 3)
+                        if myData.count % 3 != 0 {
+                            let a = myData.count
+                        }
                         
-                        for i in 0...byte.count/2-1 {
-                            let rawECG = UInt16(byte[i*2]) << 8 + UInt16(byte[i*2+1])
-                            print(rawECG)
-                            myECG = String(rawECG)
-                            ECGLineChartUpdate(ECGdata: rawECG)
-//                            
-//                            if ECGorRedToggle == true{
-//                                RedLineChartUpdate(ECGdata: rawECG)
-//                                ECGorRedToggle = false
-//                            }
-//                            else {
+                        if SlicedBuffer.count != 0 {
+                            byte.insert(contentsOf: SlicedBuffer, at: 0)
+                            SlicedBuffer.removeAll()
+                        }
+
+
+                        
+                        let loopcount = byte.count/3-1
+                        
+                        var i = 0
+                        while i < byte.count/3 {
+                            
+                            
+                            let rawBytes : [UInt8] = [byte[i*3+1],byte[i*3+2]]
+//                            var RawData : Int16 = 0
+//                            let DATA = NSData(bytes: rawBytes, length: 2)
+//                            DATA.getBytes(&RawData, length: 2)
+//                            RawData = Int16(bigEndian: RawData)
+                            
+                            UpdateChart(header: UInt8(byte[i*3]), rawData: rawBytes)
+
+                            
+//                            UpdateChart(header: UInt8(byte[i*3]), rawData: UInt16(byte[i*3+1]) << 8 + UInt16(byte[i*3+2]))
+                            
+//                            let header = UInt8(byte[i*3])
+//                            let rawECG = UInt16(byte[i*3+1]) << 8 + UInt16(byte[i*3+2])
+//                            if header == 0x01 {
 //                                ECGLineChartUpdate(ECGdata: rawECG)
-//                                ECGorRedToggle = true
+//                            } else if header == 0x02 {
+//                                RedLineChartUpdate(ECGdata: rawECG)
+//                            } else if header == 0x03 {
+//                                
+//                            } else if header == 0x04 {
+//                                
 //                            }
+                            i = i + 1
+                        }
+                        
+
+                        if byte.count % 3 != 0  {
+                            SlicedBuffer.append(contentsOf: byte[(loopcount+1)*3...byte.endIndex-1])
+                        }
+
+
+//                            
+
                             
 
-                        }
+                        
                     } else {
-                        print(myData.count)
+//                        print(myData.count)
                     }
                     
 
-                        RxLabel.text = myECG
-//                        PPGLabel.text = myPPG
                     
                 }
             case "BLEConnectNotification":
@@ -361,15 +322,16 @@ class DebugViewController: UIViewController, UITextFieldDelegate{
                 break
 //                switch connectChange
 //
-        default:
-            break
+            default:
+                break
             
         }
     }
     
     
     // Dealing with live plot
-    func setChart(TheChartView: LineChartView, values: [Double]) -> LineChartDataSet {
+    func setChart(TheChartView: LineChartView, values: [Double]) -> LineChartDataSet
+    {
         
         var dataEntries: [ChartDataEntry] = []
         // 1 - creating an array of data entries (e.g. an array of ECG data)
@@ -379,7 +341,7 @@ class DebugViewController: UIViewController, UITextFieldDelegate{
         } // A dataEntries will be ready by the end of the arry (similar to TS in matlab)
         
         // 2 - create a data set with our array, the DataSet is used to modify the appearance also
-        let lineChartDataSet = LineChartDataSet(values: dataEntries, label: "Real-Time ECG")
+        let lineChartDataSet = LineChartDataSet(values: dataEntries, label: "")
 //        let lineChartDataSet = LineChartDataSet(values: dataEntries, label: "Voltage (mV)")
         lineChartDataSet.axisDependency = .left
         lineChartDataSet.setColor(UIColor(red: (0.0/255.0), green: (102/255.0), blue: (204/255.0), alpha: (0.8))) //alpha defines transparency
@@ -412,20 +374,19 @@ class DebugViewController: UIViewController, UITextFieldDelegate{
 
         if PlayPauseToggle == true {
 
-            if GraphWindow_counter == GraphWindowSize {
-                GraphWindow_counter = 0
+            if ECGWindow_counter == GraphWindowSize {
+                ECGWindow_counter = 0
             }
             
-            let dataEntry1 = ChartDataEntry(x: Double(GraphWindow_counter), y: Double(ECGdata))
+            let dataEntry1 = ChartDataEntry(x: Double(ECGWindow_counter), y: Double(ECGdata))
             
-            ECGLineChartView.data?.removeEntry(xValue: Double(GraphWindow_counter), dataSetIndex: 0)
+            ECGLineChartView.data?.removeEntry(xValue: Double(ECGWindow_counter), dataSetIndex: 0)
             ECGDataSet.addEntryOrdered(dataEntry1)
             ECGLineChartView.notifyDataSetChanged() //Need this every time you update Chart!
             ECGLineChartView.setNeedsDisplay()
             ECGLineChartView.chartDescription?.text = "Time Elapsed: \(TotalTime - timeLeft)"
 
-            ECG_counter = ECG_counter + 1
-            GraphWindow_counter = GraphWindow_counter + 1
+            ECGWindow_counter = ECGWindow_counter + 1
         
         }
     }
@@ -434,26 +395,91 @@ class DebugViewController: UIViewController, UITextFieldDelegate{
         
         if PlayPauseToggle == true {
             
-            if GraphWindow_counter == GraphWindowSize {
-                GraphWindow_counter = 0
+            if RedWindow_counter == GraphWindowSize {
+                RedWindow_counter = 0
             }
             
-            let dataEntry1 = ChartDataEntry(x: Double(GraphWindow_counter), y: Double(ECGdata))
+            let dataEntry1 = ChartDataEntry(x: Double(RedWindow_counter), y: Double(ECGdata))
             
-            RedLineChartView.data?.removeEntry(xValue: Double(GraphWindow_counter), dataSetIndex: 0)
+            RedLineChartView.data?.removeEntry(xValue: Double(RedWindow_counter), dataSetIndex: 0)
             RedDataSet.addEntryOrdered(dataEntry1)
             RedLineChartView.notifyDataSetChanged() //Need this every time you update Chart!
             RedLineChartView.setNeedsDisplay()
             RedLineChartView.chartDescription?.text = "Time Elapsed: \(TotalTime - timeLeft)"
             
-            ECG_counter = ECG_counter + 1
-            GraphWindow_counter = GraphWindow_counter + 1
+            RedWindow_counter = RedWindow_counter + 1
             
         }
     }
     
     
+    func UpdateChart (header: UInt8, rawData: [UInt8]) {
+        if PlayPauseToggle == true {
+
+            var thisSignal = liveSignal()
+            var PlotData: Double = 0
+
+//            var finalData: Int = 0
+
+            
+            if header == 0x01 {
+                thisSignal = Respsignal
+                
+                var RawData : Int16 = 0
+                let DATA = NSData(bytes: rawData, length: 2)
+                DATA.getBytes(&RawData, length: 2)
+                RawData = Int16(bigEndian: RawData)
+                PlotData = Double(RawData)
+            } else if header == 0x02 {
+                thisSignal = ECGsignal
+                
+                var RawData : Int16 = 0
+                let DATA = NSData(bytes: rawData, length: 2)
+                DATA.getBytes(&RawData, length: 2)
+                RawData = Int16(bigEndian: RawData)
+                PlotData = Double(RawData)
+            } else if header == 0x03 {
+                thisSignal = Redsignal
+                
+                var RawData : UInt16 = 0
+                let DATA = NSData(bytes: rawData, length: 2)
+                DATA.getBytes(&RawData, length: 2)
+                RawData = UInt16(bigEndian: RawData)
+                PlotData = Double(RawData)
+            } else if header == 0x04 {
+                thisSignal = IRsignal
+                
+                var RawData : UInt16 = 0
+                let DATA = NSData(bytes: rawData, length: 2)
+                DATA.getBytes(&RawData, length: 2)
+                RawData = UInt16(bigEndian: RawData)
+                PlotData = Double(RawData)
+            }
+            
+            print(PlotData)
+            
+            let thisView = thisSignal.lineChartView
+            let thisCounter = thisSignal.window_counter
+            let thisDataSet = thisSignal.dataSet
+            
+            if thisCounter == GraphWindowSize {
+                thisSignal.window_counter = 0
+            }
+            
+            let dataEntry1 = ChartDataEntry(x: Double(thisCounter), y: Double(PlotData))
+            
+            thisView?.data?.removeEntry(xValue: Double(thisCounter), dataSetIndex: 0)
+            thisDataSet?.addEntryOrdered(dataEntry1)
+            thisView?.notifyDataSetChanged() //Need this every time you update Chart!
+            thisView?.setNeedsDisplay()
+//            thisView.chartDescription?.text = "Time Elapsed: \(TotalTime - timeLeft)"
+            
+            thisSignal.window_counter = thisSignal.window_counter + 1
+            
+        }
+    }
     
+//    func UpdateChartInt()
 
     
     func takeScreenshot(view: UIView) {
@@ -464,17 +490,45 @@ class DebugViewController: UIViewController, UITextFieldDelegate{
         UIImageWriteToSavedPhotosAlbum(image!, nil, nil, nil)
     }
     
-//    func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
-//        var highlightText = "Selected Point = ("
-//        let thisX = entry.x
-//        let thisY = entry.y
-//        highlightText.append(String(thisX))
-//        highlightText.append(", ")
-//        highlightText.append(String(thisY))
-//        HighLightedLabel.text = highlightText
-//
-//    }
-    
+
+    func initializeChart (thisChartView: LineChartView, defaultData: [Double]) -> LineChartDataSet {
+        // ECG Line Chart Configuration
+        
+        thisChartView.noDataText = "You need to provide data for the chart."
+        thisChartView.chartDescription?.text = "Tap node for details"
+        thisChartView.chartDescription?.position = CGPoint(x: 320.0, y: 168.0)
+        thisChartView.chartDescription?.textColor = UIColor.black
+        thisChartView.drawGridBackgroundEnabled = true
+        thisChartView.gridBackgroundColor = UIColor.white
+        thisChartView.borderLineWidth = 0.0
+        thisChartView.drawBordersEnabled = false
+        thisChartView.borderColor = .clear
+        thisChartView.highlightPerTapEnabled = true
+        
+        thisChartView.noDataText = "You need to provide data for the chart."
+        
+        
+        let ChartXaxis = thisChartView.xAxis
+        ChartXaxis.labelPosition = .bottom
+        ChartXaxis.labelFont = UIFont(name: "AppleSDGothicNeo-UltraLight", size: 8.0)!
+        ChartXaxis.labelTextColor = .black
+        ChartXaxis.axisMaximum = Double(GraphWindowSize + 10)
+        ChartXaxis.gridColor = UIColor(red: (239/255.0), green: (239/255.0), blue: (239/255.0), alpha: (1.0)) //alpha defines transparency
+        //        ECGxaxis.drawLimitLinesBehindDataEnabled = true
+        
+        let ChartYaxis = thisChartView.leftAxis
+        ChartYaxis.labelPosition = .outsideChart
+        ChartYaxis.labelFont = UIFont(name: "AppleSDGothicNeo-UltraLight", size: 8.0)!
+        ChartYaxis.labelTextColor = .black
+        ChartYaxis.gridColor = UIColor(red: (239/255.0), green: (239/255.0), blue: (239/255.0), alpha: (1.0)) //alpha defines transparency
+        ChartYaxis.drawBottomYLabelEntryEnabled = false
+        
+        thisChartView.rightAxis.enabled = false
+        
+        let thisDataSet = setChart(TheChartView: thisChartView, values: defaultData)
+
+        return thisDataSet
+    }
     
 
 }
